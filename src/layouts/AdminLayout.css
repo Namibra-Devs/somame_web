@@ -17,16 +17,16 @@
 }
 
 .logo-small {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  color: white;
+  width: 34px;
+  height: 34px;
+  background-color: var(--color-brand);
+  color: #ffffff;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 1.2rem;
+  font-weight: 700;
+  font-size: 1.05rem;
 }
 
 .sidebar-header h2 {

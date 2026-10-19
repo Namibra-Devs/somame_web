@@ -15,7 +15,9 @@ const VendorLayout = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate('/login');
+    localStorage.removeItem('somame_token');
+    localStorage.removeItem('somame_user');
+    navigate('/vendor/login');
   };
 
   return (
@@ -23,7 +25,7 @@ const VendorLayout = () => {
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
-          <div className="logo-small" style={{ background: 'linear-gradient(135deg, #ec4899, #f43f5e)'}}>V</div>
+          <div className="logo-small" style={{ backgroundColor: 'var(--color-vendor)' }}>V</div>
           <h2>Somame Vendor</h2>
         </div>
         

@@ -15,8 +15,9 @@ const AdminLayout = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Handle actual logout logic here
-    navigate('/login');
+    localStorage.removeItem('somame_token');
+    localStorage.removeItem('somame_user');
+    navigate('/admin/login');
   };
 
   return (
