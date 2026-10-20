@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import toast from 'react-hot-toast';
 import {
   Plus,
   Search,
@@ -11,6 +12,7 @@ import {
   Check
 } from 'lucide-react';
 import api from '../../services/api';
+import ConfirmModal from '../../components/ConfirmModal';
 import './VendorPortal.css';
 
 const FALLBACK_CATEGORIES = [
@@ -107,6 +109,7 @@ const VendorMenu = () => {
   const [itemForm, setItemForm] = useState(EMPTY_ITEM_FORM);
   const [imageFile, setImageFile] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, type: null, target: null });
 
   useEffect(() => {
     let active = true;
@@ -184,6 +187,7 @@ const VendorMenu = () => {
     } finally {
       setSaving(false);
       setCategoryModalOpen(false);
+      toast.success(categoryForm.id ? 'Category updated successfully' : 'Category created successfully');
     }
   };
 
@@ -197,6 +201,7 @@ const VendorMenu = () => {
     if (String(selectedCategoryId) === String(catId)) {
       setSelectedCategoryId('all');
     }
+    toast.success('Category deleted');
   };
 
   // Menu Item CRUD Handlers
@@ -272,6 +277,7 @@ const VendorMenu = () => {
     } finally {
       setSaving(false);
       setItemModalOpen(false);
+      toast.success(itemForm.id ? 'Menu item updated successfully' : 'Menu item added to catalog');
     }
   };
 
@@ -287,6 +293,7 @@ const VendorMenu = () => {
     } catch {
       // Keep optimistic toggle in preview mode
     }
+    toast.success(nextStock ? `${item.name} marked In Stock` : `${item.name} marked Out of Stock`);
   };
 
   const handleDeleteItem = async (itemId) => {
@@ -296,6 +303,7 @@ const VendorMenu = () => {
       // Preview mode fallback
     }
     setItems((prev) => prev.filter((it) => it.id !== itemId));
+    toast.success('Menu item deleted');
   };
 
   const addSizeRow = () => {
@@ -381,7 +389,9 @@ const VendorMenu = () => {
                       type="button"
                       className="icon-btn"
                       style={{ width: 28, height: 28, color: 'var(--color-danger)' }}
-                      onClick={() => handleDeleteCategory(cat.id)}
+                      onClick={() =>
+                        setConfirmDialog({ open: true, type: 'category', target: cat })
+                      }
                       title="Delete Category"
                     >
                       <Trash2 size={14} />
@@ -488,7 +498,9 @@ const VendorMenu = () => {
                           <button
                             type="button"
                             className="btn-danger-outline"
-                            onClick={() => handleDeleteItem(item.id)}
+                            onClick={() =>
+                              setConfirmDialog({ open: true, type: 'item', target: item })
+                            }
                           >
                             <Trash2 size={14} />
                           </button>
@@ -799,6 +811,32 @@ const VendorMenu = () => {
           </div>,
           document.body
         )}
+
+      <ConfirmModal
+        open={confirmDialog.open}
+        title={
+          confirmDialog.type === 'category'
+            ? 'Confirm deleting category'
+            : 'Confirm deleting menu item'
+        }
+        message={
+          confirmDialog.type === 'category'
+            ? `This action will remove "${confirmDialog.target?.name || 'this category'}" from your store menu. Are you sure you want to continue?`
+            : `This action will permanently remove "${confirmDialog.target?.name || 'this item'}" from your catalog. Are you sure you want to continue?`
+        }
+        confirmText="OK"
+        cancelText="Cancel"
+        onCancel={() => setConfirmDialog({ open: false, type: null, target: null })}
+        onConfirm={async () => {
+          const { type, target } = confirmDialog;
+          setConfirmDialog({ open: false, type: null, target: null });
+          if (type === 'category' && target) {
+            await handleDeleteCategory(target.id);
+          } else if (type === 'item' && target) {
+            await handleDeleteItem(target.id);
+          }
+        }}
+      />
     </div>
   );
 };

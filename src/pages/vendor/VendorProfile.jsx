@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import {
   Store,
   Clock,
@@ -102,6 +103,7 @@ const VendorProfile = () => {
 
   const showSavedMessage = (msg) => {
     setSavedBanner(msg);
+    toast.success(msg);
     setTimeout(() => setSavedBanner(''), 3500);
   };
 

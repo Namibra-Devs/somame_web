@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import toast from 'react-hot-toast';
 import {
   Search,
   Eye,
@@ -187,6 +188,7 @@ const VendorOrders = () => {
         setSelectedOrder((prev) => ({ ...prev, status: nextStatus }));
       }
       setUpdatingId(null);
+      toast.success(`Order status updated to ${nextStatus.replace(/_/g, ' ')}`);
     }
   };
 

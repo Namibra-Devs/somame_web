@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import toast from 'react-hot-toast';
 import { Plus, Tag, Edit3, Trash2, X, Calendar, Percent } from 'lucide-react';
 import api from '../../services/api';
+import ConfirmModal from '../../components/ConfirmModal';
 import '../admin/AdminDashboard.css';
 import './VendorPortal.css';
 
@@ -48,6 +50,7 @@ const VendorPromotions = () => {
   const [form, setForm] = useState(EMPTY_PROMO);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [promoToDelete, setPromoToDelete] = useState(null);
 
   useEffect(() => {
     const fetchPromotions = async () => {
@@ -129,6 +132,7 @@ const VendorPromotions = () => {
       setModalOpen(false);
     } finally {
       setSaving(false);
+      toast.success(form.id ? `Promo code ${payload.code} updated` : `Promo code ${payload.code} created`);
     }
   };
 
@@ -145,6 +149,7 @@ const VendorPromotions = () => {
     } catch {
       // Keep optimistic toggle
     }
+    toast.success(nextState ? `Promo code ${promo.code} activated` : `Promo code ${promo.code} deactivated`);
   };
 
   const handleDeletePromo = async (id) => {
@@ -154,6 +159,7 @@ const VendorPromotions = () => {
       // Preview mode fallback
     }
     setPromotions((prev) => prev.filter((p) => p.id !== id));
+    toast.success('Promo code deleted');
   };
 
   return (
@@ -252,7 +258,7 @@ const VendorPromotions = () => {
                         <button
                           type="button"
                           className="btn-danger-outline"
-                          onClick={() => handleDeletePromo(promo.id)}
+                          onClick={() => setPromoToDelete(promo)}
                         >
                           <Trash2 size={14} />
                         </button>
@@ -390,6 +396,22 @@ const VendorPromotions = () => {
           </div>,
           document.body
         )}
+
+      <ConfirmModal
+        open={Boolean(promoToDelete)}
+        title="Confirm deleting promotion"
+        message={`This action will permanently remove promo code "${promoToDelete?.code || ''}" from your store. Are you sure you want to continue?`}
+        confirmText="OK"
+        cancelText="Cancel"
+        onCancel={() => setPromoToDelete(null)}
+        onConfirm={async () => {
+          const target = promoToDelete;
+          setPromoToDelete(null);
+          if (target) {
+            await handleDeletePromo(target.id);
+          }
+        }}
+      />
     </div>
   );
 };

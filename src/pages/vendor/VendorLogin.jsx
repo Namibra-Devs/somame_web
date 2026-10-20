@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { Store, Smartphone, Lock, ArrowRight, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import '../Auth.css';
 
@@ -35,12 +36,14 @@ const VendorLogin = () => {
 
       localStorage.setItem('somame_token', token);
       localStorage.setItem('somame_user', JSON.stringify(user));
+      toast.success('Signed in to Vendor Portal');
       navigate('/vendor/dashboard');
     } catch (err) {
       const msg =
         err.response?.data?.message ||
         'Unable to sign in. Please verify your credentials or ensure the API server is running.';
       setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

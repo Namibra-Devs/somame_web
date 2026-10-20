@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import AdminLayout from './layouts/AdminLayout';
 import VendorLayout from './layouts/VendorLayout';
 import LandingPage from './pages/LandingPage';
@@ -16,6 +17,35 @@ import VendorProfile from './pages/vendor/VendorProfile';
 function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3200,
+          style: {
+            background: '#1f1f1f',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '9999px',
+            fontFamily: 'var(--font-sans)',
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            padding: '10px 18px',
+            boxShadow: '0 6px 18px rgba(0, 0, 0, 0.16)'
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#ffffff'
+            }
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#ffffff'
+            }
+          }
+        }}
+      />
       <Routes>
         {/* Entry Landing Page */}
         <Route path="/" element={<LandingPage />} />

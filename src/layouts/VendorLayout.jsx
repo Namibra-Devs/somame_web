@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -79,6 +80,7 @@ const VendorLayout = () => {
         localStorage.setItem('somame_vendor_notifications', JSON.stringify(updated));
         return updated;
       });
+      toast.success(item.body ? `${item.title}: ${item.body}` : item.title);
     };
 
     socket.on('connect', onConnect);
@@ -120,6 +122,7 @@ const VendorLayout = () => {
   const handleClearNotifications = () => {
     setNotifications([]);
     localStorage.removeItem('somame_vendor_notifications');
+    toast.success('Notifications cleared');
   };
 
   const handleClickNotification = (notif) => {
@@ -143,8 +146,9 @@ const VendorLayout = () => {
       if (res.data?.data) {
         setVendor(res.data.data);
       }
+      toast.success(nextState ? 'Store is now Open for Orders' : 'Store is now Closed');
     } catch {
-      // Preview mode fallback keeps optimistic state
+      toast.success(nextState ? 'Store is now Open for Orders' : 'Store is now Closed');
     } finally {
       setTogglingStatus(false);
     }
@@ -154,6 +158,7 @@ const VendorLayout = () => {
     disconnectSocket();
     localStorage.removeItem('somame_token');
     localStorage.removeItem('somame_user');
+    toast.success('Signed out of Vendor Portal');
     navigate('/vendor/login');
   };
 
