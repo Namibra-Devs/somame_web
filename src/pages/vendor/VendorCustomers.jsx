@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, Phone, Calendar, Eye, X, ShoppingBag } from 'lucide-react';
 import api from '../../services/api';
 import '../admin/AdminDashboard.css';
@@ -260,117 +261,119 @@ const VendorCustomers = () => {
       </div>
 
       {/* Customer Details Modal */}
-      {selectedCustomer && (
-        <div className="modal-backdrop" onClick={() => setSelectedCustomer(null)}>
-          <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div>
-                <h3>
-                  {selectedCustomer.stats?.first_name} {selectedCustomer.stats?.last_name}
-                </h3>
-                <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                  {selectedCustomer.stats?.phone_number}
-                </span>
-              </div>
-              <button type="button" className="icon-btn" onClick={() => setSelectedCustomer(null)}>
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="modal-body">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
-                <div
-                  style={{
-                    padding: '0.875rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-color)',
-                    backgroundColor: 'var(--bg-main)'
-                  }}
-                >
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Orders</div>
-                  <strong style={{ fontSize: '1.25rem' }}>
-                    {selectedCustomer.stats?.total_orders || 0}
-                  </strong>
+      {selectedCustomer &&
+        createPortal(
+          <div className="modal-backdrop" onClick={() => setSelectedCustomer(null)}>
+            <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <div>
+                  <h3>
+                    {selectedCustomer.stats?.first_name} {selectedCustomer.stats?.last_name}
+                  </h3>
+                  <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                    {selectedCustomer.stats?.phone_number}
+                  </span>
                 </div>
-                <div
-                  style={{
-                    padding: '0.875rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-color)',
-                    backgroundColor: 'var(--bg-main)'
-                  }}
-                >
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Spent</div>
-                  <strong style={{ fontSize: '1.25rem', color: 'var(--color-vendor)' }}>
-                    GH₵ {parseFloat(selectedCustomer.stats?.total_spent || 0).toFixed(2)}
-                  </strong>
-                </div>
-                <div
-                  style={{
-                    padding: '0.875rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-color)',
-                    backgroundColor: 'var(--bg-main)'
-                  }}
-                >
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Avg. Order</div>
-                  <strong style={{ fontSize: '1.25rem' }}>
-                    GH₵ {parseFloat(selectedCustomer.stats?.average_order || 0).toFixed(2)}
-                  </strong>
-                </div>
+                <button type="button" className="icon-btn" onClick={() => setSelectedCustomer(null)}>
+                  <X size={18} />
+                </button>
               </div>
 
-              <div>
-                <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.625rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                  <ShoppingBag size={15} /> Recent Orders with Your Store
-                </h4>
-                <div
-                  style={{
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--radius-md)',
-                    overflow: 'hidden'
-                  }}
-                >
-                  {(selectedCustomer.recentOrders || []).map((ord, idx) => (
-                    <div
-                      key={ord.id || idx}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '0.75rem 1rem',
-                        borderBottom:
-                          idx < (selectedCustomer.recentOrders || []).length - 1
-                            ? '1px solid var(--border-color)'
-                            : 'none'
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>{ord.order_number}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          {ord.created_at ? new Date(ord.created_at).toLocaleDateString() : ''}
+              <div className="modal-body">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+                  <div
+                    style={{
+                      padding: '0.875rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-color)',
+                      backgroundColor: 'var(--bg-main)'
+                    }}
+                  >
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Orders</div>
+                    <strong style={{ fontSize: '1.25rem' }}>
+                      {selectedCustomer.stats?.total_orders || 0}
+                    </strong>
+                  </div>
+                  <div
+                    style={{
+                      padding: '0.875rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-color)',
+                      backgroundColor: 'var(--bg-main)'
+                    }}
+                  >
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Spent</div>
+                    <strong style={{ fontSize: '1.25rem', color: 'var(--color-vendor)' }}>
+                      GH₵ {parseFloat(selectedCustomer.stats?.total_spent || 0).toFixed(2)}
+                    </strong>
+                  </div>
+                  <div
+                    style={{
+                      padding: '0.875rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-color)',
+                      backgroundColor: 'var(--bg-main)'
+                    }}
+                  >
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Avg. Order</div>
+                    <strong style={{ fontSize: '1.25rem' }}>
+                      GH₵ {parseFloat(selectedCustomer.stats?.average_order || 0).toFixed(2)}
+                    </strong>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.625rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                    <ShoppingBag size={15} /> Recent Orders with Your Store
+                  </h4>
+                  <div
+                    style={{
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--radius-md)',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    {(selectedCustomer.recentOrders || []).map((ord, idx) => (
+                      <div
+                        key={ord.id || idx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '0.75rem 1rem',
+                          borderBottom:
+                            idx < (selectedCustomer.recentOrders || []).length - 1
+                              ? '1px solid var(--border-color)'
+                              : 'none'
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>{ord.order_number}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                            {ord.created_at ? new Date(ord.created_at).toLocaleDateString() : ''}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                          <span className={`badge badge-${ord.status}`}>{ord.status}</span>
+                          <strong style={{ fontSize: '0.875rem' }}>
+                            GH₵ {parseFloat(ord.total_amount || 0).toFixed(2)}
+                          </strong>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <span className={`badge badge-${ord.status}`}>{ord.status}</span>
-                        <strong style={{ fontSize: '0.875rem' }}>
-                          GH₵ {parseFloat(ord.total_amount || 0).toFixed(2)}
-                        </strong>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="modal-footer">
-              <button type="button" className="btn-outline" onClick={() => setSelectedCustomer(null)}>
-                Close
-              </button>
+              <div className="modal-footer">
+                <button type="button" className="btn-outline" onClick={() => setSelectedCustomer(null)}>
+                  Close
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 };

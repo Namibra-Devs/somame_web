@@ -458,12 +458,17 @@
   border-top: 1px solid var(--border-color);
 }
 
-/* Modal / Drawer Overlay */
+/* Modal / Drawer Overlay — Full Viewport Portal */
 .modal-backdrop {
   position: fixed;
-  inset: 0;
-  background-color: rgba(15, 23, 42, 0.45);
-  z-index: 100;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.55);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -475,20 +480,30 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
   width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 620px;
+  max-height: calc(100vh - 3rem);
+  overflow: hidden;
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
+}
+
+.modal-panel > form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 1.5rem;
+  padding: 1.125rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
+  background-color: #ffffff;
+  flex-shrink: 0;
 }
 
 .modal-header h3 {
@@ -502,6 +517,9 @@
   display: flex;
   flex-direction: column;
   gap: 1.125rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .modal-footer {
@@ -509,9 +527,10 @@
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
-  padding: 1.125rem 1.5rem;
+  padding: 1rem 1.5rem;
   border-top: 1px solid var(--border-color);
   background-color: var(--bg-main);
+  flex-shrink: 0;
 }
 
 /* Form Grids */

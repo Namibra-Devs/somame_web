@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Plus,
   Search,
@@ -170,7 +171,6 @@ const VendorMenu = () => {
         }
       }
     } catch {
-      // Preview mode fallback
       if (categoryForm.id) {
         setCategories((prev) =>
           prev.map((c) => (c.id === categoryForm.id ? { ...c, ...categoryForm } : c))
@@ -503,298 +503,302 @@ const VendorMenu = () => {
         </div>
       </div>
 
-      {/* Category Modal */}
-      {categoryModalOpen && (
-        <div className="modal-backdrop" onClick={() => setCategoryModalOpen(false)}>
-          <div
-            className="modal-panel"
-            style={{ maxWidth: 440 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <h3>{categoryForm.id ? 'Edit Menu Category' : 'New Menu Category'}</h3>
-              <button
-                type="button"
-                className="icon-btn"
-                onClick={() => setCategoryModalOpen(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <form onSubmit={handleSaveCategory}>
-              <div className="modal-body">
-                <div className="form-group">
-                  <label>Category Name</label>
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="e.g. Grilled Specials"
-                    value={categoryForm.name}
-                    onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Description (optional)</label>
-                  <textarea
-                    placeholder="Short description shown on your store menu..."
-                    value={categoryForm.description}
-                    onChange={(e) =>
-                      setCategoryForm({ ...categoryForm, description: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div className="modal-footer">
+      {/* Category Modal Rendered in Document Body Portal */}
+      {categoryModalOpen &&
+        createPortal(
+          <div className="modal-backdrop" onClick={() => setCategoryModalOpen(false)}>
+            <div
+              className="modal-panel"
+              style={{ maxWidth: 440 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <h3>{categoryForm.id ? 'Edit Menu Category' : 'New Menu Category'}</h3>
                 <button
                   type="button"
-                  className="btn-outline"
+                  className="icon-btn"
                   onClick={() => setCategoryModalOpen(false)}
                 >
-                  Cancel
-                </button>
-                <button type="submit" className="btn-vendor" disabled={saving}>
-                  {saving ? 'Saving...' : 'Save Category'}
+                  <X size={18} />
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Menu Item Modal */}
-      {itemModalOpen && (
-        <div className="modal-backdrop" onClick={() => setItemModalOpen(false)}>
-          <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>{itemForm.id ? 'Edit Menu Item' : 'Add Menu Item'}</h3>
-              <button type="button" className="icon-btn" onClick={() => setItemModalOpen(false)}>
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveItem}>
-              <div className="modal-body">
-                <div className="form-grid-2">
+              <form onSubmit={handleSaveCategory}>
+                <div className="modal-body">
                   <div className="form-group">
-                    <label>Item Name *</label>
+                    <label>Category Name</label>
                     <input
                       type="text"
                       className="input-field"
-                      placeholder="e.g. Jollof & Spicy Chicken"
-                      value={itemForm.name}
-                      onChange={(e) => setItemForm({ ...itemForm, name: e.target.value })}
+                      placeholder="e.g. Grilled Specials"
+                      value={categoryForm.name}
+                      onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <label>Menu Category</label>
-                    <select
-                      className="select-field"
-                      value={itemForm.menu_category_id}
+                    <label>Description (optional)</label>
+                    <textarea
+                      placeholder="Short description shown on your store menu..."
+                      value={categoryForm.description}
                       onChange={(e) =>
-                        setItemForm({ ...itemForm, menu_category_id: e.target.value })
+                        setCategoryForm({ ...categoryForm, description: e.target.value })
                       }
-                    >
-                      <option value="">Uncategorized</option>
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-grid-2">
-                  <div className="form-group">
-                    <label>Base Price (GH₵) *</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      className="input-field"
-                      placeholder="0.00"
-                      value={itemForm.price}
-                      onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Default Size Label</label>
-                    <input
-                      type="text"
-                      className="input-field"
-                      placeholder="e.g. Regular, Large"
-                      value={itemForm.size}
-                      onChange={(e) => setItemForm({ ...itemForm, size: e.target.value })}
                     />
                   </div>
                 </div>
-
-                <div className="form-group">
-                  <label>Description</label>
-                  <textarea
-                    placeholder="Describe ingredients, portion size, and sides..."
-                    value={itemForm.description}
-                    onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
-                  />
-                </div>
-
-                <div className="form-grid-2">
-                  <div className="form-group">
-                    <label>Upload Product Image</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="input-field"
-                      onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Or Image URL</label>
-                    <input
-                      type="text"
-                      className="input-field"
-                      placeholder="https://..."
-                      value={itemForm.image_url}
-                      onChange={(e) => setItemForm({ ...itemForm, image_url: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                {/* Size Variations */}
-                <div className="form-group">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <label>Size Variations (optional)</label>
-                    <button type="button" className="btn-outline btn-sm" onClick={addSizeRow}>
-                      <Plus size={13} /> Add Size
-                    </button>
-                  </div>
-                  {itemForm.sizes.map((s, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginTop: '0.375rem' }}>
-                      <input
-                        type="text"
-                        className="input-field"
-                        placeholder="Size name (e.g. Large)"
-                        value={s.size}
-                        onChange={(e) => {
-                          const updated = [...itemForm.sizes];
-                          updated[idx] = { ...updated[idx], size: e.target.value };
-                          setItemForm({ ...itemForm, sizes: updated });
-                        }}
-                      />
-                      <input
-                        type="number"
-                        step="0.01"
-                        className="input-field"
-                        placeholder="Price (GH₵)"
-                        value={s.price}
-                        onChange={(e) => {
-                          const updated = [...itemForm.sizes];
-                          updated[idx] = { ...updated[idx], price: Number(e.target.value) };
-                          setItemForm({ ...itemForm, sizes: updated });
-                        }}
-                      />
-                      <button
-                        type="button"
-                        className="btn-danger-outline"
-                        onClick={() =>
-                          setItemForm({
-                            ...itemForm,
-                            sizes: itemForm.sizes.filter((_, i) => i !== idx)
-                          })
-                        }
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Extras / Add-ons */}
-                <div className="form-group">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <label>Extras &amp; Add-ons (optional)</label>
-                    <button type="button" className="btn-outline btn-sm" onClick={addExtraRow}>
-                      <Plus size={13} /> Add Extra
-                    </button>
-                  </div>
-                  {itemForm.extras.map((ex, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginTop: '0.375rem' }}>
-                      <input
-                        type="text"
-                        className="input-field"
-                        placeholder="Extra name (e.g. Extra Plantain)"
-                        value={ex.name}
-                        onChange={(e) => {
-                          const updated = [...itemForm.extras];
-                          updated[idx] = { ...updated[idx], name: e.target.value };
-                          setItemForm({ ...itemForm, extras: updated });
-                        }}
-                      />
-                      <input
-                        type="number"
-                        step="0.01"
-                        className="input-field"
-                        placeholder="Price (GH₵)"
-                        value={ex.price}
-                        onChange={(e) => {
-                          const updated = [...itemForm.extras];
-                          updated[idx] = { ...updated[idx], price: Number(e.target.value) };
-                          setItemForm({ ...itemForm, extras: updated });
-                        }}
-                      />
-                      <button
-                        type="button"
-                        className="btn-danger-outline"
-                        onClick={() =>
-                          setItemForm({
-                            ...itemForm,
-                            extras: itemForm.extras.filter((_, i) => i !== idx)
-                          })
-                        }
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="switch-row">
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>Available in Stock</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      Customers can immediately order this item when enabled
-                    </div>
-                  </div>
+                <div className="modal-footer">
                   <button
                     type="button"
-                    className={`switch-btn ${itemForm.is_in_stock ? 'on' : ''}`}
-                    onClick={() =>
-                      setItemForm((prev) => ({ ...prev, is_in_stock: !prev.is_in_stock }))
-                    }
+                    className="btn-outline"
+                    onClick={() => setCategoryModalOpen(false)}
                   >
-                    <span className="switch-thumb" />
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn-vendor" disabled={saving}>
+                    {saving ? 'Saving...' : 'Save Category'}
                   </button>
                 </div>
+              </form>
+            </div>
+          </div>,
+          document.body
+        )}
+
+      {/* Menu Item Modal Rendered in Document Body Portal */}
+      {itemModalOpen &&
+        createPortal(
+          <div className="modal-backdrop" onClick={() => setItemModalOpen(false)}>
+            <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3>{itemForm.id ? 'Edit Menu Item' : 'Add Menu Item'}</h3>
+                <button type="button" className="icon-btn" onClick={() => setItemModalOpen(false)}>
+                  <X size={18} />
+                </button>
               </div>
 
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn-outline"
-                  onClick={() => setItemModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="btn-vendor" disabled={saving}>
-                  {saving ? 'Saving...' : 'Save Item'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+              <form onSubmit={handleSaveItem}>
+                <div className="modal-body">
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>Item Name *</label>
+                      <input
+                        type="text"
+                        className="input-field"
+                        placeholder="e.g. Jollof & Spicy Chicken"
+                        value={itemForm.name}
+                        onChange={(e) => setItemForm({ ...itemForm, name: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Menu Category</label>
+                      <select
+                        className="select-field"
+                        value={itemForm.menu_category_id}
+                        onChange={(e) =>
+                          setItemForm({ ...itemForm, menu_category_id: e.target.value })
+                        }
+                      >
+                        <option value="">Uncategorized</option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>Base Price (GH₵) *</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="input-field"
+                        placeholder="0.00"
+                        value={itemForm.price}
+                        onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Default Size Label</label>
+                      <input
+                        type="text"
+                        className="input-field"
+                        placeholder="e.g. Regular, Large"
+                        value={itemForm.size}
+                        onChange={(e) => setItemForm({ ...itemForm, size: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                      placeholder="Describe ingredients, portion size, and sides..."
+                      value={itemForm.description}
+                      onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>Upload Product Image</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="input-field"
+                        onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Or Image URL</label>
+                      <input
+                        type="text"
+                        className="input-field"
+                        placeholder="https://..."
+                        value={itemForm.image_url}
+                        onChange={(e) => setItemForm({ ...itemForm, image_url: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Size Variations */}
+                  <div className="form-group">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <label>Size Variations (optional)</label>
+                      <button type="button" className="btn-outline btn-sm" onClick={addSizeRow}>
+                        <Plus size={13} /> Add Size
+                      </button>
+                    </div>
+                    {itemForm.sizes.map((s, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginTop: '0.375rem' }}>
+                        <input
+                          type="text"
+                          className="input-field"
+                          placeholder="Size name (e.g. Large)"
+                          value={s.size}
+                          onChange={(e) => {
+                            const updated = [...itemForm.sizes];
+                            updated[idx] = { ...updated[idx], size: e.target.value };
+                            setItemForm({ ...itemForm, sizes: updated });
+                          }}
+                        />
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="input-field"
+                          placeholder="Price (GH₵)"
+                          value={s.price}
+                          onChange={(e) => {
+                            const updated = [...itemForm.sizes];
+                            updated[idx] = { ...updated[idx], price: Number(e.target.value) };
+                            setItemForm({ ...itemForm, sizes: updated });
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="btn-danger-outline"
+                          onClick={() =>
+                            setItemForm({
+                              ...itemForm,
+                              sizes: itemForm.sizes.filter((_, i) => i !== idx)
+                            })
+                          }
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Extras / Add-ons */}
+                  <div className="form-group">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <label>Extras &amp; Add-ons (optional)</label>
+                      <button type="button" className="btn-outline btn-sm" onClick={addExtraRow}>
+                        <Plus size={13} /> Add Extra
+                      </button>
+                    </div>
+                    {itemForm.extras.map((ex, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginTop: '0.375rem' }}>
+                        <input
+                          type="text"
+                          className="input-field"
+                          placeholder="Extra name (e.g. Extra Plantain)"
+                          value={ex.name}
+                          onChange={(e) => {
+                            const updated = [...itemForm.extras];
+                            updated[idx] = { ...updated[idx], name: e.target.value };
+                            setItemForm({ ...itemForm, extras: updated });
+                          }}
+                        />
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="input-field"
+                          placeholder="Price (GH₵)"
+                          value={ex.price}
+                          onChange={(e) => {
+                            const updated = [...itemForm.extras];
+                            updated[idx] = { ...updated[idx], price: Number(e.target.value) };
+                            setItemForm({ ...itemForm, extras: updated });
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="btn-danger-outline"
+                          onClick={() =>
+                            setItemForm({
+                              ...itemForm,
+                              extras: itemForm.extras.filter((_, i) => i !== idx)
+                            })
+                          }
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="switch-row">
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>Available in Stock</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        Customers can immediately order this item when enabled
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className={`switch-btn ${itemForm.is_in_stock ? 'on' : ''}`}
+                      onClick={() =>
+                        setItemForm((prev) => ({ ...prev, is_in_stock: !prev.is_in_stock }))
+                      }
+                    >
+                      <span className="switch-thumb" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn-outline"
+                    onClick={() => setItemModalOpen(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn-vendor" disabled={saving}>
+                    {saving ? 'Saving...' : 'Save Item'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 };

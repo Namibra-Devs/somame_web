@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Search,
   Eye,
@@ -393,203 +394,205 @@ const VendorOrders = () => {
       </div>
 
       {/* Order Details Modal */}
-      {selectedOrder && (
-        <div className="modal-backdrop" onClick={() => setSelectedOrder(null)}>
-          <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div>
-                <h3>Order {selectedOrder.order_number}</h3>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  Placed {selectedOrder.created_at ? new Date(selectedOrder.created_at).toLocaleString() : ''}
-                </span>
-              </div>
-              <button
-                type="button"
-                className="icon-btn"
-                onClick={() => setSelectedOrder(null)}
-                aria-label="Close modal"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="modal-body">
-              {/* Status & Handoff PIN */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.875rem 1rem',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--bg-main)',
-                  border: '1px solid var(--border-color)'
-                }}
-              >
+      {selectedOrder &&
+        createPortal(
+          <div className="modal-backdrop" onClick={() => setSelectedOrder(null)}>
+            <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
-                    Current Status
-                  </div>
-                  <span className={`badge badge-${selectedOrder.status}`}>
-                    {String(selectedOrder.status).replace(/_/g, ' ')}
+                  <h3>Order {selectedOrder.order_number}</h3>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Placed {selectedOrder.created_at ? new Date(selectedOrder.created_at).toLocaleString() : ''}
                   </span>
                 </div>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={() => setSelectedOrder(null)}
+                  aria-label="Close modal"
+                >
+                  <X size={18} />
+                </button>
+              </div>
 
-                {selectedOrder.merchant_otp && (
-                  <div style={{ textAlign: 'right' }}>
-                    <div
-                      style={{
-                        fontSize: '0.75rem',
-                        color: 'var(--text-muted)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
-                        gap: '0.25rem'
-                      }}
-                    >
-                      <KeyRound size={13} /> Rider Pickup OTP
+              <div className="modal-body">
+                {/* Status & Handoff PIN */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0.875rem 1rem',
+                    borderRadius: 'var(--radius-md)',
+                    backgroundColor: 'var(--bg-main)',
+                    border: '1px solid var(--border-color)'
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                      Current Status
                     </div>
-                    <strong style={{ fontSize: '1.125rem', letterSpacing: '0.1em' }}>
-                      {selectedOrder.merchant_otp}
-                    </strong>
+                    <span className={`badge badge-${selectedOrder.status}`}>
+                      {String(selectedOrder.status).replace(/_/g, ' ')}
+                    </span>
+                  </div>
+
+                  {selectedOrder.merchant_otp && (
+                    <div style={{ textAlign: 'right' }}>
+                      <div
+                        style={{
+                          fontSize: '0.75rem',
+                          color: 'var(--text-muted)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'flex-end',
+                          gap: '0.25rem'
+                        }}
+                      >
+                        <KeyRound size={13} /> Rider Pickup OTP
+                      </div>
+                      <strong style={{ fontSize: '1.125rem', letterSpacing: '0.1em' }}>
+                        {selectedOrder.merchant_otp}
+                      </strong>
+                    </div>
+                  )}
+                </div>
+
+                {/* Customer & Rider Info */}
+                <div className="form-grid-2">
+                  <div
+                    style={{
+                      padding: '0.875rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-color)'
+                    }}
+                  >
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.375rem' }}>
+                      CUSTOMER
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>
+                      {selectedOrder.customer_first_name || selectedOrder.first_name || 'Customer'}{' '}
+                      {selectedOrder.customer_last_name || selectedOrder.last_name || ''}
+                    </div>
+                    {selectedOrder.customer_phone && (
+                      <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                        <Phone size={13} /> {selectedOrder.customer_phone}
+                      </div>
+                    )}
+                    {selectedOrder.delivery_address && (
+                      <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                        <MapPin size={13} /> {selectedOrder.delivery_address}
+                      </div>
+                    )}
+                  </div>
+
+                  <div
+                    style={{
+                      padding: '0.875rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-color)'
+                    }}
+                  >
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.375rem' }}>
+                      ASSIGNED RIDER
+                    </div>
+                    {selectedOrder.rider_first_name ? (
+                      <>
+                        <div style={{ fontWeight: 700, fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                          <Bike size={15} /> {selectedOrder.rider_first_name} {selectedOrder.rider_last_name}
+                        </div>
+                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                          <Phone size={13} /> {selectedOrder.rider_phone}
+                        </div>
+                      </>
+                    ) : (
+                      <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                        <Clock size={14} /> Rider broadcasts when order is marked Ready
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {selectedOrder.customer_note && (
+                  <div
+                    style={{
+                      padding: '0.75rem 1rem',
+                      borderRadius: 'var(--radius-md)',
+                      backgroundColor: '#fffbeb',
+                      border: '1px solid #fde68a',
+                      fontSize: '0.8125rem',
+                      color: '#92400e'
+                    }}
+                  >
+                    <strong>Customer Note:</strong> {selectedOrder.customer_note}
                   </div>
                 )}
-              </div>
 
-              {/* Customer & Rider Info */}
-              <div className="form-grid-2">
-                <div
-                  style={{
-                    padding: '0.875rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-color)'
-                  }}
-                >
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.375rem' }}>
-                    CUSTOMER
+                {/* Order Line Items */}
+                <div>
+                  <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.625rem' }}>
+                    Order Items
+                  </h4>
+                  <div
+                    style={{
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--radius-md)',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    {(selectedOrder.items || []).map((item, idx) => (
+                      <div
+                        key={item.id || idx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '0.75rem 1rem',
+                          borderBottom:
+                            idx < (selectedOrder.items || []).length - 1
+                              ? '1px solid var(--border-color)'
+                              : 'none'
+                        }}
+                      >
+                        <div>
+                          <span style={{ fontWeight: 700, marginRight: '0.5rem' }}>{item.quantity}x</span>
+                          <span style={{ fontWeight: 500 }}>{item.item_name}</span>
+                        </div>
+                        <span style={{ fontWeight: 600 }}>
+                          GH₵ {(parseFloat(item.price || 0) * parseInt(item.quantity || 1, 10)).toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                  <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>
-                    {selectedOrder.customer_first_name || selectedOrder.first_name || 'Customer'}{' '}
-                    {selectedOrder.customer_last_name || selectedOrder.last_name || ''}
-                  </div>
-                  {selectedOrder.customer_phone && (
-                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                      <Phone size={13} /> {selectedOrder.customer_phone}
-                    </div>
-                  )}
-                  {selectedOrder.delivery_address && (
-                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                      <MapPin size={13} /> {selectedOrder.delivery_address}
-                    </div>
-                  )}
                 </div>
 
+                {/* Total Summary */}
                 <div
                   style={{
-                    padding: '0.875rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-color)'
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingTop: '0.75rem',
+                    borderTop: '1px solid var(--border-color)',
+                    fontSize: '1rem',
+                    fontWeight: 800
                   }}
                 >
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.375rem' }}>
-                    ASSIGNED RIDER
-                  </div>
-                  {selectedOrder.rider_first_name ? (
-                    <>
-                      <div style={{ fontWeight: 700, fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                        <Bike size={15} /> {selectedOrder.rider_first_name} {selectedOrder.rider_last_name}
-                      </div>
-                      <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                        <Phone size={13} /> {selectedOrder.rider_phone}
-                      </div>
-                    </>
-                  ) : (
-                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                      <Clock size={14} /> Rider broadcasts when order is marked Ready
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {selectedOrder.customer_note && (
-                <div
-                  style={{
-                    padding: '0.75rem 1rem',
-                    borderRadius: 'var(--radius-md)',
-                    backgroundColor: '#fffbeb',
-                    border: '1px solid #fde68a',
-                    fontSize: '0.8125rem',
-                    color: '#92400e'
-                  }}
-                >
-                  <strong>Customer Note:</strong> {selectedOrder.customer_note}
-                </div>
-              )}
-
-              {/* Order Line Items */}
-              <div>
-                <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.625rem' }}>
-                  Order Items
-                </h4>
-                <div
-                  style={{
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--radius-md)',
-                    overflow: 'hidden'
-                  }}
-                >
-                  {(selectedOrder.items || []).map((item, idx) => (
-                    <div
-                      key={item.id || idx}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '0.75rem 1rem',
-                        borderBottom:
-                          idx < (selectedOrder.items || []).length - 1
-                            ? '1px solid var(--border-color)'
-                            : 'none'
-                      }}
-                    >
-                      <div>
-                        <span style={{ fontWeight: 700, marginRight: '0.5rem' }}>{item.quantity}x</span>
-                        <span style={{ fontWeight: 500 }}>{item.item_name}</span>
-                      </div>
-                      <span style={{ fontWeight: 600 }}>
-                        GH₵ {(parseFloat(item.price || 0) * parseInt(item.quantity || 1, 10)).toFixed(2)}
-                      </span>
-                    </div>
-                  ))}
+                  <span>Order Total ({String(selectedOrder.payment_method || 'momo').toUpperCase()})</span>
+                  <span>GH₵ {parseFloat(selectedOrder.total_amount || 0).toFixed(2)}</span>
                 </div>
               </div>
 
-              {/* Total Summary */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  paddingTop: '0.75rem',
-                  borderTop: '1px solid var(--border-color)',
-                  fontSize: '1rem',
-                  fontWeight: 800
-                }}
-              >
-                <span>Order Total ({String(selectedOrder.payment_method || 'momo').toUpperCase()})</span>
-                <span>GH₵ {parseFloat(selectedOrder.total_amount || 0).toFixed(2)}</span>
+              <div className="modal-footer">
+                {renderStatusButton(selectedOrder)}
+                <button type="button" className="btn-outline" onClick={() => setSelectedOrder(null)}>
+                  Close
+                </button>
               </div>
             </div>
-
-            <div className="modal-footer">
-              {renderStatusButton(selectedOrder)}
-              <button type="button" className="btn-outline" onClick={() => setSelectedOrder(null)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 };

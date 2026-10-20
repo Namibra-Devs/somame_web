@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Plus, Tag, Edit3, Trash2, X, Calendar, Percent } from 'lucide-react';
 import api from '../../services/api';
 import '../admin/AdminDashboard.css';
@@ -266,127 +267,129 @@ const VendorPromotions = () => {
       </div>
 
       {/* Create / Edit Promo Modal */}
-      {modalOpen && (
-        <div className="modal-backdrop" onClick={() => setModalOpen(false)}>
-          <div className="modal-panel" style={{ maxWidth: 500 }} onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>{form.id ? 'Edit Promotion' : 'Create Promotion'}</h3>
-              <button type="button" className="icon-btn" onClick={() => setModalOpen(false)}>
-                <X size={18} />
-              </button>
-            </div>
+      {modalOpen &&
+        createPortal(
+          <div className="modal-backdrop" onClick={() => setModalOpen(false)}>
+            <div className="modal-panel" style={{ maxWidth: 500 }} onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3>{form.id ? 'Edit Promotion' : 'Create Promotion'}</h3>
+                <button type="button" className="icon-btn" onClick={() => setModalOpen(false)}>
+                  <X size={18} />
+                </button>
+              </div>
 
-            <form onSubmit={handleSavePromo}>
-              <div className="modal-body">
-                {error && <div className="auth-alert">{error}</div>}
+              <form onSubmit={handleSavePromo}>
+                <div className="modal-body">
+                  {error && <div className="auth-alert">{error}</div>}
 
-                <div className="form-grid-2">
-                  <div className="form-group">
-                    <label>Promo Code *</label>
-                    <input
-                      type="text"
-                      className="input-field"
-                      placeholder="e.g. LUNCH20"
-                      value={form.code}
-                      onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Discount Type *</label>
-                    <select
-                      className="select-field"
-                      value={form.discount_type}
-                      onChange={(e) => setForm({ ...form, discount_type: e.target.value })}
-                    >
-                      <option value="percentage">Percentage (%)</option>
-                      <option value="fixed">Fixed Amount (GH₵)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-grid-2">
-                  <div className="form-group">
-                    <label>
-                      Discount Value ({form.discount_type === 'percentage' ? '%' : 'GH₵'}) *
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      className="input-field"
-                      placeholder="e.g. 15"
-                      value={form.discount_value}
-                      onChange={(e) => setForm({ ...form, discount_value: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Minimum Order Subtotal (GH₵)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      className="input-field"
-                      placeholder="0.00"
-                      value={form.min_order_subtotal}
-                      onChange={(e) => setForm({ ...form, min_order_subtotal: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-grid-2">
-                  <div className="form-group">
-                    <label>Max Discount Cap (GH₵, optional)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      className="input-field"
-                      placeholder="No limit"
-                      value={form.max_discount_limit}
-                      onChange={(e) => setForm({ ...form, max_discount_limit: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Expiry Date *</label>
-                    <input
-                      type="date"
-                      className="input-field"
-                      value={form.expires_at}
-                      onChange={(e) => setForm({ ...form, expires_at: e.target.value })}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="switch-row">
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>Promotion Active</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      Allow customers to apply this code at checkout
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>Promo Code *</label>
+                      <input
+                        type="text"
+                        className="input-field"
+                        placeholder="e.g. LUNCH20"
+                        value={form.code}
+                        onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Discount Type *</label>
+                      <select
+                        className="select-field"
+                        value={form.discount_type}
+                        onChange={(e) => setForm({ ...form, discount_type: e.target.value })}
+                      >
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="fixed">Fixed Amount (GH₵)</option>
+                      </select>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className={`switch-btn ${form.is_active ? 'on' : ''}`}
-                    onClick={() => setForm((prev) => ({ ...prev, is_active: !prev.is_active }))}
-                  >
-                    <span className="switch-thumb" />
+
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>
+                        Discount Value ({form.discount_type === 'percentage' ? '%' : 'GH₵'}) *
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="input-field"
+                        placeholder="e.g. 15"
+                        value={form.discount_value}
+                        onChange={(e) => setForm({ ...form, discount_value: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Minimum Order Subtotal (GH₵)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="input-field"
+                        placeholder="0.00"
+                        value={form.min_order_subtotal}
+                        onChange={(e) => setForm({ ...form, min_order_subtotal: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>Max Discount Cap (GH₵, optional)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="input-field"
+                        placeholder="No limit"
+                        value={form.max_discount_limit}
+                        onChange={(e) => setForm({ ...form, max_discount_limit: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Expiry Date *</label>
+                      <input
+                        type="date"
+                        className="input-field"
+                        value={form.expires_at}
+                        onChange={(e) => setForm({ ...form, expires_at: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="switch-row">
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>Promotion Active</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        Allow customers to apply this code at checkout
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className={`switch-btn ${form.is_active ? 'on' : ''}`}
+                      onClick={() => setForm((prev) => ({ ...prev, is_active: !prev.is_active }))}
+                    >
+                      <span className="switch-thumb" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="modal-footer">
+                  <button type="button" className="btn-outline" onClick={() => setModalOpen(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn-vendor" disabled={saving}>
+                    <Percent size={15} />
+                    {saving ? 'Saving...' : 'Save Promotion'}
                   </button>
                 </div>
-              </div>
-
-              <div className="modal-footer">
-                <button type="button" className="btn-outline" onClick={() => setModalOpen(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn-vendor" disabled={saving}>
-                  <Percent size={15} />
-                  {saving ? 'Saving...' : 'Save Promotion'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+              </form>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 };
