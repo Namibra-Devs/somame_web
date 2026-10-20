@@ -6,6 +6,12 @@ import VendorLogin from './pages/vendor/VendorLogin';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VendorDashboard from './pages/vendor/VendorDashboard';
+import VendorOrders from './pages/vendor/VendorOrders';
+import VendorMenu from './pages/vendor/VendorMenu';
+import VendorPromotions from './pages/vendor/VendorPromotions';
+import VendorCustomers from './pages/vendor/VendorCustomers';
+import VendorAnalytics from './pages/vendor/VendorAnalytics';
+import VendorProfile from './pages/vendor/VendorProfile';
 
 function App() {
   return (
@@ -31,6 +37,12 @@ function App() {
         <Route path="/vendor" element={<VendorLayout />}>
           <Route index element={<Navigate to="/vendor/dashboard" replace />} />
           <Route path="dashboard" element={<VendorDashboard />} />
+          <Route path="orders" element={<VendorOrders />} />
+          <Route path="menu" element={<VendorMenu />} />
+          <Route path="promotions" element={<VendorPromotions />} />
+          <Route path="customers" element={<VendorCustomers />} />
+          <Route path="analytics" element={<VendorAnalytics />} />
+          <Route path="profile" element={<VendorProfile />} />
         </Route>
 
         {/* Fallback */}
