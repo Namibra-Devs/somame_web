@@ -9,7 +9,8 @@ import {
   MapPin,
   Phone,
   KeyRound,
-  Bike
+  Bike,
+  Utensils
 } from 'lucide-react';
 import api from '../../services/api';
 import '../admin/AdminDashboard.css';
@@ -42,8 +43,20 @@ const FALLBACK_ORDERS = [
     merchant_otp: '4829',
     created_at: '2026-10-19T19:45:00.000Z',
     items: [
-      { id: 1, item_name: 'Streetwise Two with Spicy Wings', quantity: 2, price: '49.00' },
-      { id: 2, item_name: 'Large Coleslaw Tub', quantity: 1, price: '20.00' }
+      {
+        id: 1,
+        item_name: 'Streetwise Two with Spicy Wings',
+        quantity: 2,
+        price: '49.00',
+        image_url: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=200&auto=format&fit=crop&q=80'
+      },
+      {
+        id: 2,
+        item_name: 'Large Coleslaw Tub',
+        quantity: 1,
+        price: '20.00',
+        image_url: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&auto=format&fit=crop&q=80'
+      }
     ]
   },
   {
@@ -62,7 +75,13 @@ const FALLBACK_ORDERS = [
     merchant_otp: '9104',
     created_at: '2026-10-19T19:20:00.000Z',
     items: [
-      { id: 3, item_name: 'Jollof Rice & Grilled Quarter Chicken', quantity: 2, price: '51.50' }
+      {
+        id: 3,
+        item_name: 'Jollof Rice & Grilled Quarter Chicken',
+        quantity: 2,
+        price: '51.50',
+        image_url: 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=200&auto=format&fit=crop&q=80'
+      }
     ]
   },
   {
@@ -84,8 +103,20 @@ const FALLBACK_ORDERS = [
     rider_phone: '0558899001',
     created_at: '2026-10-19T18:55:00.000Z',
     items: [
-      { id: 4, item_name: '9-Piece Bucket Share Meal', quantity: 1, price: '142.50' },
-      { id: 5, item_name: 'Loaded Peri-Peri Fries', quantity: 1, price: '20.00' }
+      {
+        id: 4,
+        item_name: '9-Piece Bucket Share Meal',
+        quantity: 1,
+        price: '142.50',
+        image_url: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=200&auto=format&fit=crop&q=80'
+      },
+      {
+        id: 5,
+        item_name: 'Loaded Peri-Peri Fries',
+        quantity: 1,
+        price: '20.00',
+        image_url: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=200&auto=format&fit=crop&q=80'
+      }
     ]
   },
   {
@@ -107,7 +138,13 @@ const FALLBACK_ORDERS = [
     rider_phone: '0244556677',
     created_at: '2026-10-19T18:10:00.000Z',
     items: [
-      { id: 6, item_name: 'Zinger Burger Deluxe Meal', quantity: 1, price: '76.00' }
+      {
+        id: 6,
+        item_name: 'Zinger Burger Deluxe Meal',
+        quantity: 1,
+        price: '76.00',
+        image_url: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&auto=format&fit=crop&q=80'
+      }
     ]
   }
 ];
@@ -538,8 +575,9 @@ const VendorOrders = () => {
                   <div
                     style={{
                       border: '1px solid var(--border-color)',
-                      borderRadius: 'var(--radius-md)',
-                      overflow: 'hidden'
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      backgroundColor: '#ffffff'
                     }}
                   >
                     {(selectedOrder.items || []).map((item, idx) => (
@@ -549,6 +587,7 @@ const VendorOrders = () => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
+                          gap: '0.875rem',
                           padding: '0.75rem 1rem',
                           borderBottom:
                             idx < (selectedOrder.items || []).length - 1
@@ -556,11 +595,41 @@ const VendorOrders = () => {
                               : 'none'
                         }}
                       >
-                        <div>
-                          <span style={{ fontWeight: 700, marginRight: '0.5rem' }}>{item.quantity}x</span>
-                          <span style={{ fontWeight: 500 }}>{item.item_name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', minWidth: 0 }}>
+                          <div
+                            style={{
+                              width: 48,
+                              height: 48,
+                              borderRadius: '12px',
+                              backgroundColor: 'var(--bg-subtle)',
+                              border: '1px solid var(--border-color)',
+                              overflow: 'hidden',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0
+                            }}
+                          >
+                            {item.image_url ? (
+                              <img
+                                src={item.image_url}
+                                alt={item.item_name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <Utensils size={18} color="var(--text-muted)" />
+                            )}
+                          </div>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontWeight: 500, color: 'var(--text-main)', fontSize: '0.9375rem' }}>
+                              {item.item_name}
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.125rem' }}>
+                              Qty: <strong>{item.quantity}</strong> &times; GH₵ {parseFloat(item.price || 0).toFixed(2)}
+                            </div>
+                          </div>
                         </div>
-                        <span style={{ fontWeight: 600 }}>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)', whiteSpace: 'nowrap' }}>
                           GH₵ {(parseFloat(item.price || 0) * parseInt(item.quantity || 1, 10)).toFixed(2)}
                         </span>
                       </div>
