@@ -816,3 +816,157 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ==========================================================================
+   Earnings & Payouts — Material 3 / Somame Vendor Portal Styles
+   ========================================================================== */
+.payout-top-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.balance-hero-card {
+  background-color: var(--color-vendor);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 156px;
+}
+
+.balance-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.balance-hero-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #e6f4ea;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.balance-eye-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-fast);
+}
+
+.balance-eye-btn:hover {
+  background-color: rgba(255, 255, 255, 0.24);
+}
+
+.balance-hero-amount {
+  font-family: var(--font-display);
+  font-size: 2.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0.5rem 0;
+}
+
+.balance-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: 0.8125rem;
+  color: #e6f4ea;
+  padding-top: 0.625rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.payout-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.9375rem 1.125rem;
+  border-radius: 16px;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+}
+
+.payout-method-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: var(--color-vendor-subtle);
+  color: var(--color-vendor);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.net-payout-summary-bar {
+  margin-top: 0.75rem;
+  background-color: var(--color-vendor-subtle);
+  border: 1px solid #a8dab5;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 0.75fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.method-option-card {
+  width: 100%;
+  text-align: left;
+  padding: 1rem 1.125rem;
+  border-radius: 16px;
+  border: 1.5px solid var(--border-color);
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.method-option-card:hover {
+  background-color: var(--bg-subtle);
+}
+
+.method-option-card.selected {
+  border-color: var(--color-vendor);
+  background-color: var(--color-vendor-subtle);
+}
+
+.method-radio-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.method-option-card.selected .method-radio-dot {
+  border-color: var(--color-vendor);
+}
+
+.method-radio-dot-inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-vendor);
+}

@@ -12,6 +12,7 @@ import VendorMenu from './pages/vendor/VendorMenu';
 import VendorPromotions from './pages/vendor/VendorPromotions';
 import VendorCustomers from './pages/vendor/VendorCustomers';
 import VendorAnalytics from './pages/vendor/VendorAnalytics';
+import VendorPayouts from './pages/vendor/VendorPayouts';
 import VendorProfile from './pages/vendor/VendorProfile';
 
 function App() {
@@ -72,6 +73,7 @@ function App() {
           <Route path="promotions" element={<VendorPromotions />} />
           <Route path="customers" element={<VendorCustomers />} />
           <Route path="analytics" element={<VendorAnalytics />} />
+          <Route path="payouts" element={<VendorPayouts />} />
           <Route path="profile" element={<VendorProfile />} />
         </Route>
 

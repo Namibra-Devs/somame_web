@@ -8,6 +8,7 @@ import {
   Tag,
   Users,
   BarChart3,
+  Wallet,
   Store,
   LogOut,
   Settings,
@@ -220,6 +221,12 @@ const VendorLayout = () => {
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <BarChart3 size={19} /> Analytics
+          </NavLink>
+          <NavLink
+            to="/vendor/payouts"
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
+            <Wallet size={19} /> Earnings &amp; Payouts
           </NavLink>
           <NavLink
             to="/vendor/profile"
