@@ -37,7 +37,7 @@ const FALLBACK_ITEMS = [
     extras: [{ name: 'Extra Cheese Slice', price: 8.0 }],
     quantity: 50,
     is_in_stock: true,
-    image_url: ''
+    image_url: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&auto=format&fit=crop&q=80'
   },
   {
     id: 2,
@@ -50,7 +50,7 @@ const FALLBACK_ITEMS = [
     extras: [{ name: 'Fried Plantain (Kelewele)', price: 15.0 }],
     quantity: 35,
     is_in_stock: true,
-    image_url: ''
+    image_url: 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&auto=format&fit=crop&q=80'
   },
   {
     id: 3,
@@ -63,7 +63,7 @@ const FALLBACK_ITEMS = [
     extras: [],
     quantity: 28,
     is_in_stock: true,
-    image_url: ''
+    image_url: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&auto=format&fit=crop&q=80'
   },
   {
     id: 4,
@@ -76,7 +76,7 @@ const FALLBACK_ITEMS = [
     extras: [],
     quantity: 15,
     is_in_stock: false,
-    image_url: ''
+    image_url: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&auto=format&fit=crop&q=80'
   }
 ];
 
@@ -823,6 +823,18 @@ const VendorMenu = () => {
           confirmDialog.type === 'category'
             ? `This action will remove "${confirmDialog.target?.name || 'this category'}" from your store menu. Are you sure you want to continue?`
             : `This action will permanently remove "${confirmDialog.target?.name || 'this item'}" from your catalog. Are you sure you want to continue?`
+        }
+        itemPreview={
+          confirmDialog.type === 'item' && confirmDialog.target
+            ? {
+                imageUrl: confirmDialog.target.image_url,
+                name: confirmDialog.target.name,
+                subtext:
+                  confirmDialog.target.price != null
+                    ? `GH₵ ${parseFloat(confirmDialog.target.price || 0).toFixed(2)}`
+                    : ''
+              }
+            : null
         }
         confirmText="OK"
         cancelText="Cancel"

@@ -9,6 +9,8 @@ import {
   RefreshCw
 } from 'lucide-react';
 import api from '../../services/api';
+import toast from 'react-hot-toast';
+import { formatTimeAgo } from '../../utils/timeAgo';
 import '../admin/AdminDashboard.css';
 import './VendorPortal.css';
 
@@ -30,7 +32,7 @@ const FALLBACK_DASHBOARD = {
       last_name: 'Mensah',
       status: 'pending',
       total_amount: '120.00',
-      created_at: '2026-10-19T19:45:00.000Z'
+      created_at: '2026-10-21T15:35:00.000Z'
     },
     {
       id: 102,
@@ -39,7 +41,7 @@ const FALLBACK_DASHBOARD = {
       last_name: 'Osei',
       status: 'preparing',
       total_amount: '95.00',
-      created_at: '2026-10-19T19:20:00.000Z'
+      created_at: '2026-10-21T14:20:00.000Z'
     },
     {
       id: 103,
@@ -48,7 +50,7 @@ const FALLBACK_DASHBOARD = {
       last_name: 'Antwi',
       status: 'ready',
       total_amount: '164.50',
-      created_at: '2026-10-19T18:55:00.000Z'
+      created_at: '2026-10-21T11:45:00.000Z'
     },
     {
       id: 104,
@@ -57,7 +59,7 @@ const FALLBACK_DASHBOARD = {
       last_name: 'Boadu',
       status: 'delivered',
       total_amount: '78.00',
-      created_at: '2026-10-19T18:10:00.000Z'
+      created_at: '2026-10-20T18:10:00.000Z'
     }
   ],
   salesOverview: [
@@ -145,6 +147,7 @@ const VendorDashboard = () => {
         )
       }));
       setUpdatingOrderId(null);
+      toast.success(`Order status updated to ${nextStatus.replace(/_/g, ' ')}`);
     }
   };
 
@@ -293,7 +296,12 @@ const VendorDashboard = () => {
                 ) : (
                   (stats.recentOrders || []).map((order) => (
                     <tr key={order.id}>
-                      <td style={{ fontWeight: 700 }}>{order.order_number}</td>
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{order.order_number}</div>
+                        <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+                          {formatTimeAgo(order.created_at)}
+                        </div>
+                      </td>
                       <td>
                         {order.first_name || 'Customer'} {order.last_name || ''}
                       </td>

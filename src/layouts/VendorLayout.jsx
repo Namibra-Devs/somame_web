@@ -16,6 +16,7 @@ import {
   Trash2
 } from 'lucide-react';
 import api from '../services/api';
+import { formatTimeAgo } from '../utils/timeAgo';
 import { connectSocket, disconnectSocket } from '../services/socket';
 import './AdminLayout.css';
 
@@ -336,14 +337,7 @@ const VendorLayout = () => {
                         >
                           <div className="notif-item-top">
                             <strong>{n.title}</strong>
-                            <span>
-                              {n.created_at
-                                ? new Date(n.created_at).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })
-                                : ''}
-                            </span>
+                            <span>{formatTimeAgo(n.created_at)}</span>
                           </div>
                           <p>{n.body}</p>
                         </div>

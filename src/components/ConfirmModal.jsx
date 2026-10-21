@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { Utensils } from 'lucide-react';
 
 /**
  * Gmail / Google Material 3 inspired confirmation dialog
@@ -8,6 +9,7 @@ const ConfirmModal = ({
   open,
   title = 'Confirm action',
   message = 'Are you sure you want to continue?',
+  itemPreview = null, // Optional: { imageUrl, name, subtext }
   confirmText = 'OK',
   cancelText = 'Cancel',
   variant = 'primary', // 'primary' | 'danger'
@@ -27,7 +29,70 @@ const ConfirmModal = ({
           <h3>{title}</h3>
         </div>
 
-        <div className="modal-body" style={{ paddingTop: '0.25rem', paddingBottom: '1.25rem' }}>
+        <div className="modal-body" style={{ paddingTop: '0.25rem', paddingBottom: '1.25rem', gap: '1rem' }}>
+          {itemPreview && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.875rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '16px',
+                backgroundColor: 'var(--bg-subtle)',
+                border: '1px solid var(--border-color)'
+              }}
+            >
+              <div
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: '12px',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
+              >
+                {itemPreview.imageUrl ? (
+                  <img
+                    src={itemPreview.imageUrl}
+                    alt={itemPreview.name || 'Item'}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <Utensils size={20} color="var(--text-muted)" />
+                )}
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 500,
+                    fontSize: '0.975rem',
+                    color: 'var(--text-main)'
+                  }}
+                >
+                  {itemPreview.name}
+                </div>
+                {itemPreview.subtext && (
+                  <div
+                    style={{
+                      fontSize: '0.8125rem',
+                      fontWeight: 600,
+                      color: 'var(--color-vendor)',
+                      marginTop: '0.125rem'
+                    }}
+                  >
+                    {itemPreview.subtext}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <p style={{ margin: 0, color: '#444746', fontSize: '0.9375rem', lineHeight: 1.6 }}>
             {message}
           </p>

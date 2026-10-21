@@ -13,6 +13,7 @@ import {
   Utensils
 } from 'lucide-react';
 import api from '../../services/api';
+import { formatTimeAgo } from '../../utils/timeAgo';
 import '../admin/AdminDashboard.css';
 import './VendorPortal.css';
 
@@ -41,7 +42,7 @@ const FALLBACK_ORDERS = [
     delivery_address: 'Osu Oxford Street, Near Danquah Circle',
     customer_note: 'Please include extra chilli sauce and tissues.',
     merchant_otp: '4829',
-    created_at: '2026-10-19T19:45:00.000Z',
+    created_at: '2026-10-21T15:35:00.000Z',
     items: [
       {
         id: 1,
@@ -73,7 +74,7 @@ const FALLBACK_ORDERS = [
     delivery_address: 'East Legon, Boundary Road Apt 4B',
     customer_note: '',
     merchant_otp: '9104',
-    created_at: '2026-10-19T19:20:00.000Z',
+    created_at: '2026-10-21T14:20:00.000Z',
     items: [
       {
         id: 3,
@@ -101,7 +102,7 @@ const FALLBACK_ORDERS = [
     rider_first_name: 'Yaw',
     rider_last_name: 'Boateng',
     rider_phone: '0558899001',
-    created_at: '2026-10-19T18:55:00.000Z',
+    created_at: '2026-10-21T11:45:00.000Z',
     items: [
       {
         id: 4,
@@ -136,7 +137,7 @@ const FALLBACK_ORDERS = [
     rider_first_name: 'Ibrahim',
     rider_last_name: 'Sulemana',
     rider_phone: '0244556677',
-    created_at: '2026-10-19T18:10:00.000Z',
+    created_at: '2026-10-20T18:10:00.000Z',
     items: [
       {
         id: 6,
@@ -365,15 +366,20 @@ const VendorOrders = () => {
                         </div>
                       )}
                     </td>
-                    <td style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-                      {order.created_at
-                        ? new Date(order.created_at).toLocaleString([], {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })
-                        : '—'}
+                    <td>
+                      <div style={{ fontWeight: 500, fontSize: '0.84375rem', color: 'var(--text-main)' }}>
+                        {formatTimeAgo(order.created_at)}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        {order.created_at
+                          ? new Date(order.created_at).toLocaleString([], {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })
+                          : '—'}
+                      </div>
                     </td>
                     <td>
                       <span className="meta-chip" style={{ textTransform: 'uppercase' }}>
@@ -440,8 +446,11 @@ const VendorOrders = () => {
               <div className="modal-header">
                 <div>
                   <h3>Order {selectedOrder.order_number}</h3>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Placed {selectedOrder.created_at ? new Date(selectedOrder.created_at).toLocaleString() : ''}
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Placed {formatTimeAgo(selectedOrder.created_at)}
+                    {selectedOrder.created_at
+                      ? ` • ${new Date(selectedOrder.created_at).toLocaleString()}`
+                      : ''}
                   </span>
                 </div>
                 <button
