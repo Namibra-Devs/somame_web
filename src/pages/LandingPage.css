@@ -622,3 +622,68 @@
     gap: 1rem;
   }
 }
+
+@media (max-width: 640px) {
+  .landing-container {
+    padding: 0 1rem;
+  }
+
+  .landing-nav {
+    height: auto;
+    min-height: 64px;
+    padding: 0.625rem 0;
+  }
+
+  .landing-nav-inner {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .landing-nav-actions {
+    gap: 0.45rem;
+  }
+
+  .btn-admin-nav,
+  .btn-vendor-nav {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+  }
+
+  .landing-hero {
+    padding: 2.5rem 0 2.5rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .btn-hero-vendor,
+  .btn-hero-admin {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .preview-kpi-row {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-section {
+    padding: 3rem 0;
+  }
+
+  .section-title {
+    font-size: 1.65rem;
+  }
+
+  .portal-card {
+    padding: 1.5rem;
+  }
+}

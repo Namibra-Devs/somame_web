@@ -14,7 +14,9 @@ import {
   Settings,
   Bell,
   CheckCheck,
-  Trash2
+  Trash2,
+  Menu,
+  X
 } from 'lucide-react';
 import api from '../services/api';
 import { formatTimeAgo } from '../utils/timeAgo';
@@ -23,6 +25,7 @@ import './AdminLayout.css';
 
 const VendorLayout = () => {
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [vendor, setVendor] = useState({
     name: 'KFC East Legon',
     is_open: true,
@@ -173,63 +176,90 @@ const VendorLayout = () => {
 
   return (
     <div className="app-container">
+      {/* Mobile Sidebar Backdrop */}
+      {mobileMenuOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <div className="logo-small" style={{ backgroundColor: 'var(--color-vendor)' }}>
-            V
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', minWidth: 0 }}>
+            <div className="logo-small" style={{ backgroundColor: 'var(--color-vendor)', flexShrink: 0 }}>
+              V
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <h2>Somame Vendor</h2>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Merchant Workspace</span>
+            </div>
           </div>
-          <div>
-            <h2>Somame Vendor</h2>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Merchant Workspace</span>
-          </div>
+          <button
+            type="button"
+            className="sidebar-close-btn"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close navigation menu"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         <nav className="sidebar-nav">
           <NavLink
             to="/vendor/dashboard"
+            onClick={() => setMobileMenuOpen(false)}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <LayoutDashboard size={19} /> Dashboard
           </NavLink>
           <NavLink
             to="/vendor/orders"
+            onClick={() => setMobileMenuOpen(false)}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <ShoppingBag size={19} /> Orders
           </NavLink>
           <NavLink
             to="/vendor/menu"
+            onClick={() => setMobileMenuOpen(false)}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <UtensilsCrossed size={19} /> Menu &amp; Catalog
           </NavLink>
           <NavLink
             to="/vendor/promotions"
+            onClick={() => setMobileMenuOpen(false)}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <Tag size={19} /> Promotions
           </NavLink>
           <NavLink
             to="/vendor/customers"
+            onClick={() => setMobileMenuOpen(false)}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <Users size={19} /> Customers
           </NavLink>
           <NavLink
             to="/vendor/analytics"
+            onClick={() => setMobileMenuOpen(false)}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <BarChart3 size={19} /> Analytics
           </NavLink>
           <NavLink
             to="/vendor/payouts"
+            onClick={() => setMobileMenuOpen(false)}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <Wallet size={19} /> Earnings &amp; Payouts
           </NavLink>
           <NavLink
             to="/vendor/profile"
+            onClick={() => setMobileMenuOpen(false)}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <Store size={19} /> Store Settings
@@ -246,13 +276,22 @@ const VendorLayout = () => {
       {/* Main Content */}
       <main className="main-content">
         <header className="topbar">
-          <div className="topbar-search" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="topbar-search" style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', minWidth: 0 }}>
+            <button
+              type="button"
+              className="mobile-menu-btn"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
+            >
+              <Menu size={21} />
+            </button>
             <h2 className="page-title">{vendor.name || 'Vendor Portal'}</h2>
           </div>
 
           <div className="topbar-actions">
             <button
               type="button"
+              className="store-status-btn"
               onClick={handleToggleStoreOpen}
               disabled={togglingStatus}
               style={{
@@ -265,7 +304,8 @@ const VendorLayout = () => {
                 backgroundColor: vendor.is_open ? '#ecfdf5' : '#fef2f2',
                 color: vendor.is_open ? '#059669' : '#dc2626',
                 fontSize: '0.8125rem',
-                fontWeight: 600
+                fontWeight: 600,
+                whiteSpace: 'nowrap'
               }}
               title="Toggle Store Open/Closed status"
             >
@@ -274,10 +314,11 @@ const VendorLayout = () => {
                   width: 8,
                   height: 8,
                   borderRadius: '50%',
-                  backgroundColor: vendor.is_open ? '#059669' : '#dc2626'
+                  backgroundColor: vendor.is_open ? '#059669' : '#dc2626',
+                  flexShrink: 0
                 }}
               />
-              {vendor.is_open ? 'Store Open' : 'Store Closed'}
+              <span className="store-status-label">{vendor.is_open ? 'Store Open' : 'Store Closed'}</span>
             </button>
 
             {/* Real-Time Notifications Bell */}

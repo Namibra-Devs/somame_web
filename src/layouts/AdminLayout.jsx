@@ -1,18 +1,22 @@
+import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Store, 
-  Bike, 
-  ShoppingBag, 
+import {
+  LayoutDashboard,
+  Users,
+  Store,
+  Bike,
+  ShoppingBag,
   LogOut,
   Bell,
-  Settings
+  Settings,
+  Menu,
+  X
 } from 'lucide-react';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('somame_token');
@@ -22,27 +26,66 @@ const AdminLayout = () => {
 
   return (
     <div className="app-container">
+      {/* Mobile Sidebar Backdrop */}
+      {mobileMenuOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <div className="logo-small">S</div>
-          <h2>Somame Admin</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', minWidth: 0 }}>
+            <div className="logo-small" style={{ flexShrink: 0 }}>S</div>
+            <h2>Somame Admin</h2>
+          </div>
+          <button
+            type="button"
+            className="sidebar-close-btn"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close navigation menu"
+          >
+            <X size={20} />
+          </button>
         </div>
-        
+
         <nav className="sidebar-nav">
-          <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+          <NavLink
+            to="/admin/dashboard"
+            onClick={() => setMobileMenuOpen(false)}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
             <LayoutDashboard size={20} /> Dashboard
           </NavLink>
-          <NavLink to="/admin/vendors" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+          <NavLink
+            to="/admin/vendors"
+            onClick={() => setMobileMenuOpen(false)}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
             <Store size={20} /> Vendors
           </NavLink>
-          <NavLink to="/admin/riders" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+          <NavLink
+            to="/admin/riders"
+            onClick={() => setMobileMenuOpen(false)}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
             <Bike size={20} /> Riders
           </NavLink>
-          <NavLink to="/admin/customers" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+          <NavLink
+            to="/admin/customers"
+            onClick={() => setMobileMenuOpen(false)}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
             <Users size={20} /> Customers
           </NavLink>
-          <NavLink to="/admin/orders" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+          <NavLink
+            to="/admin/orders"
+            onClick={() => setMobileMenuOpen(false)}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
             <ShoppingBag size={20} /> Orders
           </NavLink>
         </nav>
@@ -58,8 +101,15 @@ const AdminLayout = () => {
       <main className="main-content">
         {/* Top Header */}
         <header className="topbar">
-          <div className="topbar-search">
-            {/* Search or breadcrumbs could go here */}
+          <div className="topbar-search" style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', minWidth: 0 }}>
+            <button
+              type="button"
+              className="mobile-menu-btn"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
+            >
+              <Menu size={21} />
+            </button>
             <h2 className="page-title">Admin Portal</h2>
           </div>
           <div className="topbar-actions">

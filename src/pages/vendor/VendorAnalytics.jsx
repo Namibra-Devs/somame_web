@@ -226,7 +226,7 @@ const VendorAnalytics = () => {
             ))}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="date-range-inputs" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             <Calendar size={16} color="var(--text-muted)" />
             <input
               type="date"

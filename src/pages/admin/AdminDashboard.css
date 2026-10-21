@@ -177,3 +177,45 @@
   background-color: #d3e3fd;
   color: var(--color-primary);
 }
+
+/* Mobile & Tablet Responsive Overrides for Dashboard & Tables */
+@media (max-width: 960px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.45rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+
+  .stat-card {
+    gap: 0.75rem;
+  }
+
+  .stat-value {
+    font-size: 1.45rem;
+  }
+
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modern-table th {
+    padding: 0.75rem 0.75rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .modern-table td {
+    padding: 0.75rem;
+    font-size: 0.84375rem;
+  }
+}

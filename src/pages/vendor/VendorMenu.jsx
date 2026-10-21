@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
 import {
@@ -9,7 +9,10 @@ import {
   FolderPlus,
   Utensils,
   X,
-  Check
+  Check,
+  UploadCloud,
+  RefreshCw,
+  Image as ImageIcon
 } from 'lucide-react';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
@@ -94,6 +97,13 @@ const EMPTY_ITEM_FORM = {
   extras: []
 };
 
+const formatFileSize = (bytes) => {
+  if (!bytes || bytes <= 0) return '';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
+
 const VendorMenu = () => {
   const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
   const [items, setItems] = useState(FALLBACK_ITEMS);
@@ -104,10 +114,14 @@ const VendorMenu = () => {
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [categoryForm, setCategoryForm] = useState({ id: null, name: '', description: '' });
 
-  // Item Modal State
+  // Item Modal & Premium Image Uploader State
   const [itemModalOpen, setItemModalOpen] = useState(false);
   const [itemForm, setItemForm] = useState(EMPTY_ITEM_FORM);
   const [imageFile, setImageFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const itemImageInputRef = useRef(null);
+
   const [saving, setSaving] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, type: null, target: null });
 
@@ -127,6 +141,51 @@ const VendorMenu = () => {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (imagePreviewUrl) {
+        URL.revokeObjectURL(imagePreviewUrl);
+      }
+    };
+  }, [imagePreviewUrl]);
+
+  const handleSelectItemImageFile = (file) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file (PNG, JPG, WEBP, SVG)');
+      return;
+    }
+
+    if (imagePreviewUrl) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+
+    const nextPreview = URL.createObjectURL(file);
+    setImageFile(file);
+    setImagePreviewUrl(nextPreview);
+    toast.success(`Selected "${file.name}" for preview`);
+  };
+
+  const handleDiscardStagedItemImage = (silent = false) => {
+    if (imagePreviewUrl) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+    setImageFile(null);
+    setImagePreviewUrl('');
+    if (itemImageInputRef.current) {
+      itemImageInputRef.current.value = '';
+    }
+    if (!silent) {
+      toast.success('Staged product image removed');
+    }
+  };
+
+  const handleClearSavedItemImage = () => {
+    handleDiscardStagedItemImage(true);
+    setItemForm((prev) => ({ ...prev, image_url: '' }));
+    toast.success('Product image removed');
+  };
 
   const filteredItems = items.filter((item) => {
     const matchesCategory =
@@ -206,16 +265,17 @@ const VendorMenu = () => {
 
   // Menu Item CRUD Handlers
   const openNewItemModal = () => {
+    handleDiscardStagedItemImage(true);
     setItemForm({
       ...EMPTY_ITEM_FORM,
       menu_category_id:
         selectedCategoryId !== 'all' ? selectedCategoryId : categories[0]?.id || ''
     });
-    setImageFile(null);
     setItemModalOpen(true);
   };
 
   const openEditItemModal = (item) => {
+    handleDiscardStagedItemImage(true);
     setItemForm({
       id: item.id,
       menu_category_id: item.menu_category_id || '',
@@ -229,7 +289,6 @@ const VendorMenu = () => {
       sizes: Array.isArray(item.sizes) ? item.sizes : [],
       extras: Array.isArray(item.extras) ? item.extras : []
     });
-    setImageFile(null);
     setItemModalOpen(true);
   };
 
@@ -246,8 +305,11 @@ const VendorMenu = () => {
       formData.append('size', itemForm.size);
       formData.append('quantity', itemForm.quantity);
       formData.append('is_in_stock', String(itemForm.is_in_stock));
-      if (itemForm.image_url) formData.append('image_url', itemForm.image_url);
-      if (imageFile) formData.append('image', imageFile);
+      if (imageFile) {
+        formData.append('image', imageFile);
+      } else if (itemForm.image_url !== undefined) {
+        formData.append('image_url', itemForm.image_url || '');
+      }
       formData.append('sizes', JSON.stringify(itemForm.sizes));
       formData.append('extras', JSON.stringify(itemForm.extras));
 
@@ -262,18 +324,22 @@ const VendorMenu = () => {
           setItems((prev) => [res.data.data, ...prev]);
         }
       }
+      handleDiscardStagedItemImage(true);
     } catch {
       const payload = {
         ...itemForm,
         id: itemForm.id || Date.now(),
         menu_category_id: Number(itemForm.menu_category_id) || null,
-        price: parseFloat(itemForm.price || 0)
+        price: parseFloat(itemForm.price || 0),
+        image_url: imagePreviewUrl || itemForm.image_url || ''
       };
       if (itemForm.id) {
         setItems((prev) => prev.map((it) => (it.id === itemForm.id ? payload : it)));
       } else {
         setItems((prev) => [payload, ...prev]);
       }
+      setImageFile(null);
+      setImagePreviewUrl('');
     } finally {
       setSaving(false);
       setItemModalOpen(false);
@@ -319,6 +385,8 @@ const VendorMenu = () => {
       extras: [...prev.extras, { name: '', price: '' }]
     }));
   };
+
+  const activeItemImageSrc = imagePreviewUrl || itemForm.image_url || '';
 
   return (
     <div className="vendor-page animate-fade-in">
@@ -590,6 +658,130 @@ const VendorMenu = () => {
 
               <form onSubmit={handleSaveItem}>
                 <div className="modal-body">
+                  {/* Premium Menu Item Image Uploader & Live Preview */}
+                  <div
+                    className={`logo-uploader-card ${isDraggingImage ? 'dragging' : ''}`}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDraggingImage(true);
+                    }}
+                    onDragLeave={() => setIsDraggingImage(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDraggingImage(false);
+                      const droppedFile = e.dataTransfer.files?.[0];
+                      if (droppedFile) {
+                        handleSelectItemImageFile(droppedFile);
+                      }
+                    }}
+                  >
+                    <input
+                      ref={itemImageInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          handleSelectItemImageFile(file);
+                        }
+                      }}
+                    />
+
+                    <div className="logo-uploader-main">
+                      <div className="logo-preview-group">
+                        <div className={`logo-preview-box ${imageFile ? 'has-new' : ''}`}>
+                          {activeItemImageSrc ? (
+                            <img
+                              src={activeItemImageSrc}
+                              alt={itemForm.name || 'Menu Item Preview'}
+                            />
+                          ) : (
+                            <div className="logo-preview-fallback">
+                              <Utensils size={26} />
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="logo-info-col">
+                          <div className="logo-info-top">
+                            <h4>Product Image</h4>
+                            {imageFile ? (
+                              <span className="badge badge-delivered">New Preview Ready</span>
+                            ) : itemForm.image_url ? (
+                              <span className="badge badge-preparing">Current Image</span>
+                            ) : null}
+                          </div>
+                          <p className="logo-info-sub">
+                            Upload a dish photo (PNG, JPG, or WEBP) or drag and drop it here to preview before saving.
+                          </p>
+
+                          {imageFile && (
+                            <div className="logo-file-pill">
+                              <ImageIcon size={13} color="var(--color-vendor)" />
+                              <span>
+                                {imageFile.name} ({formatFileSize(imageFile.size)})
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="logo-actions-col">
+                        <button
+                          type="button"
+                          className="btn-outline btn-sm"
+                          onClick={() => itemImageInputRef.current?.click()}
+                        >
+                          {activeItemImageSrc ? (
+                            <>
+                              <RefreshCw size={14} /> Replace Image
+                            </>
+                          ) : (
+                            <>
+                              <UploadCloud size={15} /> Upload Image
+                            </>
+                          )}
+                        </button>
+
+                        {imageFile ? (
+                          <button
+                            type="button"
+                            className="btn-danger-outline"
+                            onClick={() => handleDiscardStagedItemImage(false)}
+                          >
+                            <X size={14} /> Remove New Upload
+                          </button>
+                        ) : itemForm.image_url ? (
+                          <button
+                            type="button"
+                            className="btn-danger-outline"
+                            onClick={handleClearSavedItemImage}
+                          >
+                            <Trash2 size={14} /> Remove Image
+                          </button>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    <div className="form-group" style={{ paddingTop: '0.25rem' }}>
+                      <label>Or Paste Direct Image URL</label>
+                      <input
+                        type="text"
+                        className="input-field"
+                        style={{ backgroundColor: '#ffffff' }}
+                        placeholder="https://example.com/dish-photo.jpg"
+                        value={itemForm.image_url}
+                        onChange={(e) => {
+                          if (imageFile) {
+                            handleDiscardStagedItemImage(true);
+                          }
+                          setItemForm({ ...itemForm, image_url: e.target.value });
+                        }}
+                      />
+                    </div>
+                  </div>
+
                   <div className="form-grid-2">
                     <div className="form-group">
                       <label>Item Name *</label>
@@ -653,28 +845,6 @@ const VendorMenu = () => {
                       value={itemForm.description}
                       onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
                     />
-                  </div>
-
-                  <div className="form-grid-2">
-                    <div className="form-group">
-                      <label>Upload Product Image</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="input-field"
-                        onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Or Image URL</label>
-                      <input
-                        type="text"
-                        className="input-field"
-                        placeholder="https://..."
-                        value={itemForm.image_url}
-                        onChange={(e) => setItemForm({ ...itemForm, image_url: e.target.value })}
-                      />
-                    </div>
                   </div>
 
                   {/* Size Variations */}
