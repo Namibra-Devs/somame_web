@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { ShieldCheck, Smartphone, Lock, ArrowRight, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import '../Auth.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://edie2i0oywal8nbqiy4q96tb.161.97.80.67.sslip.io';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
