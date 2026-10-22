@@ -6,6 +6,13 @@ import LandingPage from './pages/LandingPage';
 import VendorLogin from './pages/vendor/VendorLogin';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminVendors from './pages/admin/AdminVendors';
+import AdminRiders from './pages/admin/AdminRiders';
+import AdminCustomers from './pages/admin/AdminCustomers';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminPayouts from './pages/admin/AdminPayouts';
+import AdminSupport from './pages/admin/AdminSupport';
+import AdminSettings from './pages/admin/AdminSettings';
 import VendorDashboard from './pages/vendor/VendorDashboard';
 import VendorOrders from './pages/vendor/VendorOrders';
 import VendorMenu from './pages/vendor/VendorMenu';
@@ -62,6 +69,13 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="vendors" element={<AdminVendors />} />
+          <Route path="riders" element={<AdminRiders />} />
+          <Route path="customers" element={<AdminCustomers />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="payouts" element={<AdminPayouts />} />
+          <Route path="support" element={<AdminSupport />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
 
         {/* Vendor Protected Portal Routes */}
